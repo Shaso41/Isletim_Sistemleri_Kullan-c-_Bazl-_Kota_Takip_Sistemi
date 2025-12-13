@@ -1,0 +1,16 @@
+{
+    "quotas": {
+        "admin": {
+            "limit": 104857600000,
+            "usage": 0
+        },
+        "user1": {
+            "limit": 104857600,
+            "usage": 0.0
+        }
+    },
+    "passwords": {
+        "admin": "admin",
+        "user1": "123"
+    }
+}

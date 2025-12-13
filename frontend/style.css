@@ -1,0 +1,60 @@
+/* frontend/style.css */
+body { 
+    background-color: #1e1e1e; 
+    color: #d4d4d4; 
+    font-family: 'Consolas', monospace; 
+    margin: 0; 
+    padding: 20px; 
+}
+
+h1 {
+    color: #00ff00;
+    font-size: 1.5em;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+}
+
+#output { 
+    background-color: #000; 
+    height: 400px; 
+    overflow-y: scroll; 
+    padding: 10px; 
+    border: 1px solid #333; 
+    margin-bottom: 15px;
+    white-space: pre-wrap; /* Boşlukları korur, output'u daha düzgün yapar */
+}
+
+.command { 
+    color: #00ff00; /* Kullanıcının girdiği komut */
+    font-weight: bold; 
+}
+
+.prompt-text {
+    color: #00ff00; 
+    font-weight: bold; 
+    margin-right: 5px;
+}
+
+.success { 
+    color: #00ff00; /* Başarılı işlemler */
+}
+
+.error { 
+    color: #ff5555; /* Hatalı işlemler */
+}
+
+#input-container { 
+    margin-top: 10px; 
+    display: flex; 
+    align-items: center; 
+}
+
+#command-input { 
+    flex-grow: 1; 
+    padding: 8px; 
+    font-size: 14px; 
+    background: #252526; 
+    color: #d4d4d4; 
+    border: 1px solid #555;
+    outline: none;
+}

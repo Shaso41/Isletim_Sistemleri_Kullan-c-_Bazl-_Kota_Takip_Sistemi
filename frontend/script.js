@@ -62,6 +62,7 @@ async function handleCommand() {
                 const filePath = args[0];
                 const contentText = args.slice(1).join(" "); 
                 body = { file_path: filePath, content: contentText };
+                requiredArgs = args.length; // Dinamik argüman sayısı
             } else { requiredArgs = 2; } // Hata mesajı için
             break;
         case 'cat': 

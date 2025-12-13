@@ -138,7 +138,14 @@ class QuotaManager:
 
     def decrease_usage(self, user_id, deleted_size_bytes):
         if user_id in self.user_quotas:
+            # Kullanımı düşür
             self.user_quotas[user_id]['usage'] -= deleted_size_bytes
+            
+            # Kullanım sıfırın altına düşerse (çok nadir bir hata durumudur), sıfırla.
+            if self.user_quotas[user_id]['usage'] < 0:
+                self.user_quotas[user_id]['usage'] = 0
+                
+            # Diske kaydet
             self.save_data()
             return True
         return False

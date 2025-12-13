@@ -6,7 +6,7 @@
         },
         "user1": {
             "limit": 104857600,
-            "usage": 0.0
+            "usage": 1048576.0
         }
     },
     "passwords": {

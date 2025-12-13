@@ -185,6 +185,8 @@ class FileSystem:
         if file_path not in self.files: return "HATA: Çalıştırılacak dosya bulunamadı."
         return f"HATA: [{user_id}] '{file_path}' dosyasında çalıştırma (Execute) izni yoktur."
 
+    # backend/FileSystem.py (delete_file metodu)
+
     def delete_file(self, file_path):
         try: user_id = self._get_active_user()
         except PermissionError as e: return str(e)
@@ -192,14 +194,22 @@ class FileSystem:
         if file_path not in self.files: return "HATA: Dosya bulunamadı."
         if self.files[file_path]['owner'] != user_id: return "Erişim Reddedildi."
         
+        # 1. Silinecek boyutu AL (Silmeden Önce!)
+        deleted_size = self.files[file_path]['size'] 
+
         physical_path = self._get_physical_path(user_id, file_path)
+        
+        # 2. Fiziksel silme
         try: os.remove(physical_path)
         except FileNotFoundError: pass 
         except Exception as e: return f"HATA: {e}"
 
-        deleted_size = self.files[file_path]['size'] 
+        # 3. Kota kullanımını DÜŞ
         self.qm.decrease_usage(user_id, deleted_size)
+        
+        # 4. Mantıksal kaydı sil
         del self.files[file_path]
+        
         return f"BAŞARILI: '{file_path}' silindi."
 
     def list_files(self):

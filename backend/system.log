@@ -1,0 +1,15 @@
+[2025-12-16 09:34:56] USER: user1 | ACTION: LOGIN_FAILED | Wrong password attempt
+[2025-12-16 09:35:06] USER: admin | ACTION: LOGIN_FAILED | Wrong password attempt
+[2025-12-16 09:36:38] USER: admin | ACTION: LOGIN_FAILED | Wrong password attempt
+[2025-12-16 09:36:49] USER: admin | ACTION: LOGIN_FAILED | Wrong password attempt
+[2025-12-16 09:40:03] USER: admin | ACTION: LOGIN | Successful login
+[2025-12-16 09:40:13] USER: admin | ACTION: REGISTER | New User: user1, Quota: 100MB
+[2025-12-16 09:40:24] USER: admin | ACTION: REGISTER | New User: user2, Quota: 10.0MB
+[2025-12-16 09:40:30] USER: admin | ACTION: LOGOUT | Session ended
+[2025-12-16 09:40:35] USER: user1 | ACTION: LOGIN | Successful login
+[2025-12-16 09:41:00] USER: user1 | ACTION: CREATE_FILE | Path: /home/user1/hello.txt, Size: 1.0MB
+[2025-12-16 09:41:32] USER: user1 | ACTION: WRITE_FILE | Path: /home/user1/hello.txt (Append)
+[2025-12-16 09:42:01] USER: user1 | ACTION: READ_FILE | Path: /home/user1/hello.txt
+[2025-12-16 09:42:18] USER: user1 | ACTION: DELETE_FILE | Path: /home/user1/hello.txt, Size: 1048576.0 bytes
+[2025-12-16 09:42:27] USER: user1 | ACTION: LOGOUT | Session ended
+[2025-12-16 09:42:30] USER: user2 | ACTION: LOGIN | Successful login

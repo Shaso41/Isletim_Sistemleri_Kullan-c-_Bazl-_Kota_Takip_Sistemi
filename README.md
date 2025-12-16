@@ -65,6 +65,8 @@ register <id> <şifre> [MB] | Yeni kullanıcı oluşturur. (Sadece Admin. Kota g
 | `ls` | Dosyaları listeler. |
 | `create <MB> <yol>` | Belirtilen boyutta dosya oluşturur. |
 | `write <yol> <metin>` | Dosyanın içine metin yazar/ekler. |
+| `overwrite <yol> <metin>` | Dosyanın içeriğini tamamen siler ve yenisini yazar. |
+| `truncate <yol>` | Dosyanın içeriğini tamamen boşaltır (0 byte yapar). |
 | `cat <yol>` | Dosyanın içeriğini okur. |
 | `delete <yol>` | Dosyayı siler. |
 | `run <yol>` | Dosyayı çalıştırmayı dener (İzin testi). |

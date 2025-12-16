@@ -54,7 +54,7 @@ Web terminalinde kullanabileceğiniz komutlar:
 ### Temel Komutlar
 | Komut | Açıklama |
 | :--- | :--- |
-| `register <id> <şifre>` | Yeni kullanıcı oluşturur (Default: 100MB). |
+register <id> <şifre> [MB] | Yeni kullanıcı oluşturur. (Sadece Admin. Kota girilmezse 100MB). |
 | `login <id> <şifre>` | Sisteme giriş yapar. |
 | `logout` | Oturumu kapatır. |
 | `help` | Komut listesini gösterir. |

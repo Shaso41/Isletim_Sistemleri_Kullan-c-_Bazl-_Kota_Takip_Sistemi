@@ -16,9 +16,15 @@ def serve_index(): return send_from_directory('../frontend', 'index.html')
 
 @app.route('/register', methods=['POST'])
 def register():
-    if fs.current_user: return jsonify({'message': f"HATA: Lütfen logout olun.", 'success': False})
+    # Artık giriş yapmadan register yapılamaz (Admin yapacak)
+    if not fs.current_user: 
+        return jsonify({'message': "HATA: Bu işlem için Admin girişi gereklidir.", 'success': False})
+
     data = request.json
-    response_msg = fs.register_user(data.get('user_id'), data.get('password'))
+    # quota_mb verisini al (yoksa None gider)
+    quota_val = data.get('quota_mb')
+    
+    response_msg = fs.register_user(data.get('user_id'), data.get('password'), quota_val)
     return jsonify({'message': response_msg, 'success': 'HATA' not in response_msg})
 
 @app.route('/login', methods=['POST'])

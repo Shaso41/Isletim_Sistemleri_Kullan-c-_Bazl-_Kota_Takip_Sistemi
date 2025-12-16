@@ -84,15 +84,26 @@ class QuotaManager:
         
         print(f"[Sistem] {len(self.user_quotas)} kullanıcı verisi yüklendi ve senkronize edildi.")
 
-    def add_user(self, user_id, password): 
-        """Yeni bir kullanıcıyı varsayılan kota ile ekler."""
-        quota_bytes = DEFAULT_QUOTA_MB * self.MB 
+    def add_user(self, user_id, password, quota_mb=None): 
+        """
+        Yeni kullanıcı ekler. 
+        quota_mb verilirse onu kullanır, verilmezse varsayılanı (DEFAULT_QUOTA_MB) kullanır.
+        """
+        # Eğer kota girilmediyse veya boşsa varsayılanı al
+        if quota_mb is None or quota_mb == "":
+            final_quota_mb = DEFAULT_QUOTA_MB
+        else:
+            final_quota_mb = float(quota_mb)
+
+        quota_bytes = final_quota_mb * self.MB 
+        
         self.user_quotas[user_id] = {
             'limit': quota_bytes,
             'usage': 0
         }
         self.passwords[user_id] = password
         self.save_data()
+        return final_quota_mb
 
     def delete_user_data(self, user_id):
         """Kullanıcı verilerini sistemden kaldırır."""

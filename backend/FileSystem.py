@@ -50,18 +50,24 @@ class FileSystem:
         print("[Sistem] Dosya sistemi senkronizasyonu tamamlandı.")
 
     # --- KULLANICI YÖNETİMİ ---
-    def register_user(self, user_id, password):
+    def register_user(self, user_id, password, quota_mb=None):
+        # 1. Admin Kontrolü
+        if self.current_user != 'admin':
+            return "HATA: Yeni kullanıcı oluşturma yetkisi sadece 'admin' hesabına aittir."
+            
         if user_id in self.qm.user_quotas: return f"HATA: Kullanıcı {user_id} zaten kayıtlı."
-        if user_id == "admin": return "HATA: 'admin' kullanıcı adı rezerve edilmiştir."
+        if user_id == "admin": return "HATA: 'admin' ismi kullanılamaz."
 
-        try: self.qm.add_user(user_id, password) 
-        except Exception as e: return f"HATA: Kota eklenemedi: {e}"
+        try: 
+            # 2. Kota Yöneticisine gönder (Quota opsiyonel)
+            assigned_quota = self.qm.add_user(user_id, password, quota_mb)
+        except Exception as e: return f"HATA: Kullanıcı eklenemedi: {e}"
         
         self.home_dirs[user_id] = f"/home/{user_id}/"
         physical_dir_path = self._get_physical_dir_path(user_id)
         try:
             os.makedirs(physical_dir_path, exist_ok=True)
-            return f"BAŞARILI: Kullanıcı '{user_id}' ({DEFAULT_QUOTA_MB} MB) kaydedildi."
+            return f"BAŞARILI: Kullanıcı '{user_id}' oluşturuldu. (Kota: {assigned_quota} MB)"
         except OSError as e: return f"HATA: Dizin oluşturulamadı: {e}"
             
     def login(self, user_id, password):

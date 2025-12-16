@@ -32,11 +32,26 @@ async function handleCommand() {
 
     switch (cmd) {
         case 'register':
-            requiredArgs = 2; // id, şifre
-            if (args.length === requiredArgs) {
+            // 2 argüman (kotasız) veya 3 argüman (kotalı) olabilir
+            if (args.length === 2 || args.length === 3) {
                 endpoint = '/register';
                 method = 'POST';
-                body = { user_id: args[0], password: args[1] };
+                
+                const quotaValue = (args.length === 3) ? args[2] : null;
+                
+                body = { 
+                    user_id: args[0], 
+                    password: args[1],
+                    quota_mb: quotaValue 
+                };
+
+                // DÜZELTME: Doğrulama başarılı olduğu için beklenen sayıyı
+                // mevcut girilen sayıya eşitliyoruz ki alttaki kontrolü geçsin.
+                requiredArgs = args.length; 
+
+            } else {
+                // Hata mesajı için varsayılan olarak 2 diyelim
+                requiredArgs = 2; 
             }
             break;
         case 'login':
@@ -114,7 +129,7 @@ async function handleCommand() {
             
         case 'help':
             printOutput("<b>Temel Komutlar:</b>\n" +
-                        "  register <id> <şifre>      : Kayıt ol (100MB kota).\n" +
+                        "  register <id> <şifre> [MB] : Yeni kullanıcı oluştur (Sadece Admin).\n" +
                         "  login <id> <şifre>         : Giriş yap.\n" +
                         "  logout                     : Çıkış yap.\n" +
                         "  create <MB> <yol>          : Dosya oluştur (Yazma İzni).\n" +

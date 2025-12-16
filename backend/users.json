@@ -7,10 +7,15 @@
         "user1": {
             "limit": 104857600,
             "usage": 1048576.0
+        },
+        "user2": {
+            "limit": 10485760.0,
+            "usage": 1048576.0
         }
     },
     "passwords": {
         "admin": "admin",
-        "user1": "123"
+        "user1": "123",
+        "user2": "234"
     }
 }

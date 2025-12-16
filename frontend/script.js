@@ -70,6 +70,26 @@ async function handleCommand() {
                 body = { size_mb: args[0], file_path: args[1] };
             }
             break;
+        case 'overwrite':
+            // Kullanım: overwrite <yol> <yeni metin>
+            if (args.length >= 2) {
+                endpoint = '/overwrite_file';
+                method = 'POST';
+                const fPath = args[0];
+                const newContent = args.slice(1).join(" ");
+                body = { file_path: fPath, content: newContent };
+                requiredArgs = args.length; 
+            } else { requiredArgs = 2; }
+            break;
+        case 'truncate':
+            // Kullanım: truncate <yol>
+            if (args.length === 1) {
+                endpoint = '/truncate_file';
+                method = 'POST';
+                body = { file_path: args[0] };
+                requiredArgs = 1;
+            } else { requiredArgs = 1; }
+            break;    
         case 'clear':
             outputDiv.innerHTML = ''; // Ekranı temizler
             break;
@@ -143,6 +163,8 @@ async function handleCommand() {
                         "  write <yol> <metin>        : Dosyaya metin ekle (Yazma İzni).\n" +
                         "  cat <yol>                  : Dosya oku (Okuma İzni).\n" +
                         "  run <yol>                  : Dosya çalıştır (Çalıştırma İzni - Engelli).\n" +
+                        "  overwrite <yol> <metin>: Dosyanın üzerine yaz (Replace)\n" +
+                        "  truncate <yol>             : Dosyayı boşalt (Truncate).\n" +
                         "  ls                         : Listele (Okuma İzni).\n" +
                         "  delete <yol>               : Sil (Yazma İzni).\n\n" +
                         "<b>Admin Komutları (login admin admin):</b>\n" +

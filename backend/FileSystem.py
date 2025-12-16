@@ -297,3 +297,38 @@ class FileSystem:
         if user_id == "admin": return "[admin] Yönetici Hesabı: Kota takibi yoktur." 
         usage, limit = self.qm.get_status(user_id)
         return f"[{user_id}] Kota Durumu: {usage:.2f} MB / {limit:.2f} MB"
+    def overwrite_file(self, file_path, content):
+        """Dosyanın içeriğini silip yenisini yazar (Overwrite)."""
+        try: user_id = self._get_active_user()
+        except PermissionError as e: return str(e)
+        if user_id == "admin": return "HATA: Admin dosya içeriği değiştiremez."
+        if file_path not in self.files: return "HATA: Dosya bulunamadı."
+        if self.files[file_path]['owner'] != user_id: return "Erişim Reddedildi."
+
+        physical_path = self._get_physical_path(user_id, file_path)
+        try:
+            # 'w' kipi dosyayı açarken içeriğini siler!
+            with open(physical_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            
+            self.log_action(user_id, "OVERWRITE_FILE", f"Path: {file_path}")
+            return f"BAŞARILI: '{file_path}' içeriği değiştirildi."
+        except Exception as e: return f"HATA: {e}"
+
+    def truncate_file(self, file_path):
+        """Dosyanın içeriğini tamamen temizler."""
+        try: user_id = self._get_active_user()
+        except PermissionError as e: return str(e)
+        if user_id == "admin": return "HATA: Admin dosya değiştiremez."
+        if file_path not in self.files: return "HATA: Dosya bulunamadı."
+        if self.files[file_path]['owner'] != user_id: return "Erişim Reddedildi."
+
+        physical_path = self._get_physical_path(user_id, file_path)
+        try:
+            # İçine hiçbir şey yazmadan 'w' ile açıp kapatmak içini temizler.
+            with open(physical_path, 'w', encoding='utf-8') as f:
+                pass 
+            
+            self.log_action(user_id, "TRUNCATE_FILE", f"Path: {file_path} (Cleared)")
+            return f"BAŞARILI: '{file_path}' içi temizlendi."
+        except Exception as e: return f"HATA: {e}"

@@ -94,6 +94,18 @@ def delete_user_api(user_id):
     if fs.current_user != 'admin': return jsonify({'message': "HATA: Admin yetkisi gerekli.", 'success': False})
     return jsonify({'message': fs.delete_user(user_id), 'success': True})
 
+@app.route('/overwrite_file', methods=['POST'])
+def overwrite_file():
+    data = request.json
+    response_msg = fs.overwrite_file(data.get('file_path'), data.get('content'))
+    return jsonify({'message': response_msg})
+
+@app.route('/truncate_file', methods=['POST'])
+def truncate_file():
+    data = request.json
+    response_msg = fs.truncate_file(data.get('file_path'))
+    return jsonify({'message': response_msg})
+
 @app.route('/set_quota', methods=['POST'])
 def set_quota_api():
     if fs.current_user != 'admin': return jsonify({'message': "HATA: Admin yetkisi gerekli.", 'success': False})

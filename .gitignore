@@ -1,0 +1,9 @@
+# Python derleme dosyaları
+__pycache__/
+*.pyc
+
+# Kullanıcı klasörleri (Sonu _home ile biten her şey)
+*_home/
+
+# Veritabanı dosyası (Her testte değişeceği için yüklenmemeli)
+users.json

@@ -70,6 +70,13 @@ async function handleCommand() {
                 body = { size_mb: args[0], file_path: args[1] };
             }
             break;
+        case 'clear':
+            outputDiv.innerHTML = ''; // Ekranı temizler
+            break;
+        case 'date':
+            const now = new Date();
+            printOutput(now.toString());
+            break;
         case 'write': 
             if (args.length >= 2) {
                 endpoint = '/write_file';

@@ -1,6 +1,7 @@
 # backend/FileSystem.py
 import os
 import shutil 
+import datetime
 from QuotaManager import QuotaManager, DEFAULT_QUOTA_MB 
 
 class FileSystem:
@@ -32,6 +33,17 @@ class FileSystem:
     def is_in_user_directory(self, user_id, file_path):
         home_path = self.home_dirs.get(user_id, '')
         return file_path.startswith(home_path)
+    
+    def log_action(self, user_id, action, details):
+        """Sistemi izlemek için log kaydı tutar."""
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_entry = f"[{timestamp}] USER: {user_id} | ACTION: {action} | {details}\n"
+        
+        try:
+            with open("system.log", "a", encoding="utf-8") as f:
+                f.write(log_entry)
+        except Exception as e:
+            print(f"Log yazma hatası: {e}")
 
     def sync_on_startup(self):
         print("[Sistem] Fiziksel dizinler taranıyor...")
@@ -67,6 +79,10 @@ class FileSystem:
         physical_dir_path = self._get_physical_dir_path(user_id)
         try:
             os.makedirs(physical_dir_path, exist_ok=True)
+            
+            # LOG EKLEME
+            self.log_action("admin", "REGISTER", f"New User: {user_id}, Quota: {assigned_quota}MB")
+            
             return f"BAŞARILI: Kullanıcı '{user_id}' oluşturuldu. (Kota: {assigned_quota} MB)"
         except OSError as e: return f"HATA: Dizin oluşturulamadı: {e}"
             
@@ -74,11 +90,22 @@ class FileSystem:
         if user_id not in self.qm.user_quotas: return "HATA: Geçersiz kullanıcı ID."
         if self.qm.check_password(user_id, password):
             self.current_user = user_id
+            
+            # LOG EKLEME
+            self.log_action(user_id, "LOGIN", "Successful login")
+            
             return f"[{user_id}] Başarıyla giriş yapıldı."
-        else: return "HATA: Şifre yanlış."
+        else: 
+            # Hatalı girişi de loglayabiliriz (Opsiyonel ama güvenlik için iyi)
+            self.log_action(user_id, "LOGIN_FAILED", "Wrong password attempt")
+            return "HATA: Şifre yanlış."
 
     def logout(self):
         logged_out_user = self.current_user
+        if logged_out_user:
+            # LOG EKLEME
+            self.log_action(logged_out_user, "LOGOUT", "Session ended")
+            
         self.current_user = None
         return f"[{logged_out_user}] Oturum kapatıldı."
         
@@ -100,13 +127,22 @@ class FileSystem:
         if user_id in self.home_dirs: del self.home_dirs[user_id]
         self.files = {path: info for path, info in self.files.items() if info['owner'] != user_id}
 
+        # LOG EKLEME
+        self.log_action("admin", "DELETE_USER", f"Deleted User: {user_id}")
+
         return f"BAŞARILI: Kullanıcı '{user_id}' silindi."
 
     def set_user_quota(self, target_user_id, new_quota_mb): 
         if self.current_user != 'admin':
             return f"HATA: Bu işlem sadece yönetici (admin) tarafından gerçekleştirilebilir."
         if target_user_id == 'admin': return "HATA: Admin kotası güncellenemez."
+        
         success, message = self.qm.set_quota(target_user_id, new_quota_mb)
+        
+        if success:
+            # LOG EKLEME
+            self.log_action("admin", "SET_QUOTA", f"User: {target_user_id}, New Quota: {new_quota_mb}MB")
+            
         return message
 
     def list_users(self):
@@ -145,11 +181,18 @@ class FileSystem:
                 with open(physical_path, 'w', encoding='utf-8') as f:
                     f.write(f"Bu dosya {size_mb} MB (simülasyon).")
                 self.files[file_path] = {'owner': user_id, 'size': size_bytes}
+                
+                # LOG EKLEME
+                self.log_action(user_id, "CREATE_FILE", f"Path: {file_path}, Size: {size_mb}MB")
+                
                 return f"BAŞARILI: '{file_path}' oluşturuldu. {message}"
             except Exception as e:
                 self.qm.decrease_usage(user_id, size_bytes)
                 return f"HATA: Yazma sorunu: {e}."
-        else: return message
+        else: 
+            # Kota aşımını da loglayabiliriz
+            self.log_action(user_id, "QUOTA_EXCEEDED", f"Attempted Size: {size_mb}MB")
+            return message
 
     def write_to_file(self, file_path, content):
         """Dosyaya metin yazar (Append)."""
@@ -164,6 +207,10 @@ class FileSystem:
             # GÜNCELLEME: write işleminde utf-8 zorunlu
             with open(physical_path, 'a', encoding='utf-8') as f:
                 f.write(f"\n{content}")
+            
+            # LOG EKLEME
+            self.log_action(user_id, "WRITE_FILE", f"Path: {file_path} (Append)")
+            
             return f"BAŞARILI: '{file_path}' dosyasına metin eklendi."
         except Exception as e: return f"HATA: {e}"
 
@@ -182,6 +229,10 @@ class FileSystem:
             # GÜNCELLEME: Okurken hata verirse (errors='replace') karakteri  ile değiştir, çökmesin.
             with open(physical_path, 'r', encoding='utf-8', errors='replace') as f:
                 content = f.read()
+            
+            # LOG EKLEME (Opsiyonel: Okuma işlemleri çok log yaratabilir ama denetim için iyidir)
+            self.log_action(user_id, "READ_FILE", f"Path: {file_path}")
+            
             return content if content else "[Dosya Boş]"
         except Exception as e: return f"HATA: {e}"
 
@@ -189,9 +240,11 @@ class FileSystem:
         try: user_id = self._get_active_user()
         except PermissionError as e: return str(e)
         if file_path not in self.files: return "HATA: Çalıştırılacak dosya bulunamadı."
+        
+        # LOG EKLEME (Engellenen işlemi de kaydediyoruz)
+        self.log_action(user_id, "EXECUTE_ATTEMPT", f"Path: {file_path} (BLOCKED)")
+        
         return f"HATA: [{user_id}] '{file_path}' dosyasında çalıştırma (Execute) izni yoktur."
-
-    # backend/FileSystem.py (delete_file metodu)
 
     def delete_file(self, file_path):
         try: user_id = self._get_active_user()
@@ -216,6 +269,9 @@ class FileSystem:
         # 4. Mantıksal kaydı sil
         del self.files[file_path]
         
+        # LOG EKLEME
+        self.log_action(user_id, "DELETE_FILE", f"Path: {file_path}, Size: {deleted_size} bytes")
+
         return f"BAŞARILI: '{file_path}' silindi."
 
     def list_files(self):

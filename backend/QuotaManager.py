@@ -1,6 +1,7 @@
 # backend/QuotaManager.py
 import json
 import os
+import hashlib
 
 DATA_FILE = "users.json"
 DEFAULT_QUOTA_MB = 100  # Varsayılan kullanıcı kotası
@@ -28,6 +29,9 @@ class QuotaManager:
                 except json.JSONDecodeError:
                     print("[HATA] Kullanıcı veri dosyası (users.json) bozuk.")
 
+    def _hash_password(self, password):
+        return hashlib.sha256(password.encode()).hexdigest()
+    
     def save_data(self):
         """Tüm kullanıcı verilerini users.json dosyasına kaydeder."""
         data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), DATA_FILE)
@@ -101,7 +105,7 @@ class QuotaManager:
             'limit': quota_bytes,
             'usage': 0
         }
-        self.passwords[user_id] = password
+        self.passwords[user_id] = self._hash_password(password)
         self.save_data()
         return final_quota_mb
 
@@ -129,7 +133,8 @@ class QuotaManager:
         return True, f"BAŞARILI: '{user_id}' için yeni kota {new_quota_mb} MB olarak ayarlandı."
 
     def check_password(self, user_id, password):
-        return self.passwords.get(user_id) == password
+        stored_hash = self.passwords.get(user_id)
+        return stored_hash == self._hash_password(password)
 
     def check_and_update_usage(self, user_id, required_size_bytes):
         if user_id not in self.user_quotas:

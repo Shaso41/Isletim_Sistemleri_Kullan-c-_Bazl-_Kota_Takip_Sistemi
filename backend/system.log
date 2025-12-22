@@ -13,3 +13,29 @@
 [2025-12-16 09:42:18] USER: user1 | ACTION: DELETE_FILE | Path: /home/user1/hello.txt, Size: 1048576.0 bytes
 [2025-12-16 09:42:27] USER: user1 | ACTION: LOGOUT | Session ended
 [2025-12-16 09:42:30] USER: user2 | ACTION: LOGIN | Successful login
+[2025-12-22 15:14:42] USER: admin | ACTION: LOGIN | Successful login
+[2025-12-22 15:15:03] USER: admin | ACTION: LOGOUT | Session ended
+[2025-12-22 15:15:07] USER: user2 | ACTION: LOGIN | Successful login
+[2025-12-22 15:15:14] USER: user2 | ACTION: LOGOUT | Session ended
+[2025-12-22 15:15:18] USER: user1 | ACTION: LOGIN | Successful login
+[2025-12-22 15:15:48] USER: user1 | ACTION: QUOTA_EXCEEDED | Attempted Size: 101.0MB
+[2025-12-22 15:16:08] USER: user1 | ACTION: CREATE_FILE | Path: /home/user1/umay.txt, Size: 1.0MB
+[2025-12-22 15:16:17] USER: user1 | ACTION: READ_FILE | Path: /home/user1/umay.txt
+[2025-12-22 15:16:42] USER: user1 | ACTION: WRITE_FILE | Path: /home/user1/umay.txt (Append)
+[2025-12-22 15:16:50] USER: user1 | ACTION: READ_FILE | Path: /home/user1/umay.txt
+[2025-12-22 15:17:21] USER: user1 | ACTION: OVERWRITE_FILE | Path: /home/user1/umay.txt
+[2025-12-22 15:17:26] USER: user1 | ACTION: READ_FILE | Path: /home/user1/umay.txt
+[2025-12-22 15:17:44] USER: user1 | ACTION: LOGOUT | Session ended
+[2025-12-22 15:17:48] USER: admin | ACTION: LOGIN | Successful login
+[2025-12-22 15:18:36] USER: admin | ACTION: REGISTER | New User: hasan, Quota: 100MB
+[2025-12-22 15:19:15] USER: admin | ACTION: LOGIN | Successful login
+[2025-12-22 15:20:00] USER: admin | ACTION: DELETE_USER | Deleted User: hasan
+[2025-12-22 15:20:46] USER: admin | ACTION: EXECUTE_ATTEMPT | Path: /home/user1/umay.txt (BLOCKED)
+[2025-12-22 15:21:18] USER: admin | ACTION: SET_QUOTA | User: user1, New Quota: 200.0MB
+[2025-12-22 15:21:44] USER: admin | ACTION: LOGOUT | Session ended
+[2025-12-22 15:21:48] USER: user1 | ACTION: LOGIN | Successful login
+[2025-12-22 15:22:03] USER: user1 | ACTION: READ_FILE | Path: /home/user1/umay.txt
+[2025-12-22 15:22:12] USER: user1 | ACTION: TRUNCATE_FILE | Path: /home/user1/umay.txt (Cleared)
+[2025-12-22 15:22:16] USER: user1 | ACTION: READ_FILE | Path: /home/user1/umay.txt
+[2025-12-22 15:22:31] USER: user1 | ACTION: WRITE_FILE | Path: /home/user1/umay.txt (Append)
+[2025-12-22 15:22:36] USER: user1 | ACTION: READ_FILE | Path: /home/user1/umay.txt
